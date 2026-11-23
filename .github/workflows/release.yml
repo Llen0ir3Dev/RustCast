@@ -1,0 +1,47 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build release binary
+    # Built on the oldest supported target so the binary works on Ubuntu 22.04+.
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install native dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            pkg-config build-essential libgtk-3-dev libx11-dev \
+            libxkbcommon-dev libwayland-dev libgstreamer1.0-dev \
+            libgstreamer-plugins-base1.0-dev libpulse-dev libasound2-dev
+
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Build release binary
+        run: cargo build --release --locked
+
+      - name: Package
+        run: |
+          mkdir -p dist
+          cp target/release/rustcast dist/
+          cp README.md LICENSE dist/
+          tar -czf rustcast-${{ github.ref_name }}-linux-x86_64.tar.gz -C dist .
+          sha256sum rustcast-${{ github.ref_name }}-linux-x86_64.tar.gz > rustcast-${{ github.ref_name }}-linux-x86_64.tar.gz.sha256
+
+      - name: Publish GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            rustcast-${{ github.ref_name }}-linux-x86_64.tar.gz
+            rustcast-${{ github.ref_name }}-linux-x86_64.tar.gz.sha256
+          generate_release_notes: true

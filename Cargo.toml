@@ -1,0 +1,35 @@
+[package]
+name = "rustcast"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.75"
+license = "Apache-2.0"
+description = "A lightweight, native streaming and screen-recording application for Linux"
+repository = "https://github.com/Llen0ir3Dev/RustCast"
+readme = "README.md"
+keywords = ["streaming", "recording", "gstreamer", "egui", "linux"]
+categories = ["multimedia", "gui"]
+
+[dependencies]
+anyhow = "1"
+chrono = { version = "0.4", default-features = false, features = ["clock"] }
+dirs = "5"
+env_logger = "0.11"
+eframe = "=0.29.1"
+egui = "=0.29.1"
+gstreamer = "0.23"
+gstreamer-app = "0.23"
+gstreamer-video = "0.23"
+log = "0.4"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[dev-dependencies]
+tempfile = "3"
+
+[profile.release]
+opt-level = 3
+lto = "thin"
+codegen-units = 1
+panic = "abort"
+strip = true

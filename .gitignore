@@ -1,0 +1,15 @@
+/target/
+**/*.rs.bk
+*.pdb
+*.log
+*.mkv
+*.mp4
+*.flv
+*.ts
+.env
+.env.*
+rustcast.toml
+config.json
+.idea/
+.vscode/
+.DS_Store
